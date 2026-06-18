@@ -1,0 +1,29 @@
+# Python Bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+ipython_log.py
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS specific files
+Thumbs.db
+db.json
+Desktop.ini

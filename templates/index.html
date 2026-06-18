@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Pulse - Live Updates & Sharing</title>
+    <meta name="description" content="Stay updated with the latest Google BigQuery features, changes, deprecations, and fixes. Filter announcements and instantly craft pre-formatted Tweets.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+    <!-- Background Glow Effects -->
+    <div class="glow-bg glow-blue"></div>
+    <div class="glow-bg glow-purple"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand-section">
+                <div class="logo-wrapper">
+                    <!-- Custom SVG Logo representing BigQuery + Cloud -->
+                    <svg class="cloud-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-3m0 0l-1.5 1.5M12 15l1.5 1.5M8.25 18h7.5" />
+                    </svg>
+                </div>
+                <div class="brand-titles">
+                    <h1 id="app-title">BigQuery Release Pulse</h1>
+                    <p class="brand-subtitle">Real-time Feed & Twitter Broadcaster</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <span id="cache-indicator" class="cache-badge hidden" title="Data loaded from local cache to prevent API rate limits">Cached</span>
+                <button id="refresh-btn" class="btn btn-primary" aria-label="Refresh release notes">
+                    <!-- SVG Refresh Icon -->
+                    <svg id="refresh-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Dashboard -->
+        <section class="stats-dashboard" id="stats-dashboard" aria-label="Updates Statistics">
+            <div class="stat-card" id="stat-total">
+                <div class="stat-header">
+                    <span class="stat-label">Total Updates</span>
+                    <span class="stat-icon-wrapper blue">
+                        <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </span>
+                </div>
+                <div class="stat-value" id="count-total">-</div>
+            </div>
+            
+            <div class="stat-card" id="stat-features">
+                <div class="stat-header">
+                    <span class="stat-label">Features Added</span>
+                    <span class="stat-icon-wrapper green">
+                        <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    </span>
+                </div>
+                <div class="stat-value text-green" id="count-features">-</div>
+            </div>
+
+            <div class="stat-card" id="stat-issues">
+                <div class="stat-header">
+                    <span class="stat-label">Issues & Warnings</span>
+                    <span class="stat-icon-wrapper red">
+                        <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </span>
+                </div>
+                <div class="stat-value text-red" id="count-issues">-</div>
+            </div>
+        </section>
+
+        <!-- Search and Filters -->
+        <nav class="filters-panel" aria-label="Search and filter release notes">
+            <div class="search-box">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" id="search-input" placeholder="Search updates by keyword..." aria-label="Search updates">
+            </div>
+            
+            <div class="type-filters" id="type-filters">
+                <button class="filter-pill active" data-type="all">All Updates</button>
+                <button class="filter-pill" data-type="Feature">Features</button>
+                <button class="filter-pill" data-type="Announcement">Announcements</button>
+                <button class="filter-pill" data-type="Change">Changes</button>
+                <button class="filter-pill" data-type="Breaking">Breaking</button>
+                <button class="filter-pill" data-type="Issue">Issues</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-section">
+            <div id="loading-indicator" class="hidden">
+                <!-- Skeleton loader cards -->
+                <div class="skeleton-grid">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+            
+            <div id="error-container" class="error-wrapper hidden">
+                <div class="error-card">
+                    <svg class="error-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <h2>Failed to load release notes</h2>
+                    <p id="error-message">Check your internet connection and try again.</p>
+                    <button id="retry-btn" class="btn btn-secondary">Retry Fetch</button>
+                </div>
+            </div>
+
+            <div id="updates-grid" class="updates-grid" aria-live="polite">
+                <!-- Cards will be dynamically injected here by Javascript -->
+            </div>
+
+            <div id="no-results" class="no-results-wrapper hidden">
+                <div class="no-results-card">
+                    <svg class="no-results-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3>No updates match your filters</h3>
+                    <p>Try clearing your search keyword or switching filters.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>BigQuery Release Pulse is built with Python Flask & Vanilla CSS/JS. Official feed from <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener noreferrer">Google Cloud Platform</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Twitter Draft & Share Modal -->
+    <div id="tweet-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h3 id="modal-title">Draft Update Tweet</h3>
+                <button id="close-modal-btn" class="btn-close" aria-label="Close modal">
+                    <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </header>
+            
+            <main class="modal-body">
+                <div class="source-info">
+                    <span id="tweet-type-badge" class="badge">Feature</span>
+                    <span id="tweet-date" class="tweet-date">June 17, 2026</span>
+                </div>
+                
+                <label for="tweet-textarea" class="sr-only">Tweet Content</label>
+                <textarea id="tweet-textarea" rows="6" maxlength="500" placeholder="Write your tweet..."></textarea>
+                
+                <div class="modal-stats">
+                    <div id="char-limit-indicator" class="char-count">
+                        <span id="char-current">0</span> / <span id="char-max">280</span> characters
+                    </div>
+                    <span id="char-warning" class="char-warning-msg hidden">Exceeds 280-character limit! Link length counts as 23 characters.</span>
+                </div>
+            </main>
+            
+            <footer class="modal-footer">
+                <button id="copy-tweet-btn" class="btn btn-secondary">
+                    <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>Copy Text</span>
+                </button>
+                <button id="share-tweet-btn" class="btn btn-share">
+                    <svg class="icon x-logo" viewBox="0 0 24 24" fill="currentColor">
+                        <!-- Custom X (formerly Twitter) logo -->
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span>Post on X</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Toast Notification for Clipboards -->
+    <div id="toast-notification" class="toast hidden" role="alert" aria-live="assertive">
+        <span>Copied draft tweet to clipboard!</span>
+    </div>
+
+    <!-- JavaScript Bundle -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
