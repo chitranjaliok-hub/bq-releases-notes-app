@@ -34,14 +34,23 @@ const copyTweetBtn = document.getElementById('copy-tweet-btn');
 const shareTweetBtn = document.getElementById('share-tweet-btn');
 const toastNotification = document.getElementById('toast-notification');
 
+// Theme Toggle Elements
+const themeToggle = document.getElementById('theme-toggle');
+const themeIconDark = document.getElementById('theme-icon-dark');
+const themeIconLight = document.getElementById('theme-icon-light');
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     fetchUpdates();
     setupEventListeners();
 });
 
 // Event Listeners Setup
 function setupEventListeners() {
+    // Theme Toggle
+    themeToggle.addEventListener('click', toggleTheme);
+
     // Refresh & Retry
     refreshBtn.addEventListener('click', () => fetchUpdates(true));
     retryBtn.addEventListener('click', () => fetchUpdates(true));
@@ -318,5 +327,37 @@ function showLoading(isLoading) {
         refreshBtn.disabled = false;
         refreshIcon.classList.remove('spinning');
         loadingIndicator.classList.add('hidden');
+    }
+}
+
+// Theme management functions
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('dark-theme');
+        themeIconDark.classList.add('hidden');
+        themeIconLight.classList.remove('hidden');
+    } else {
+        document.body.classList.add('dark-theme');
+        document.body.classList.remove('light-theme');
+        themeIconDark.classList.remove('hidden');
+        themeIconLight.classList.add('hidden');
+    }
+}
+
+function toggleTheme() {
+    if (document.body.classList.contains('light-theme')) {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+        themeIconDark.classList.remove('hidden');
+        themeIconLight.classList.add('hidden');
+    } else {
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+        themeIconDark.classList.add('hidden');
+        themeIconLight.classList.remove('hidden');
     }
 }
